@@ -18,7 +18,11 @@ let board = []; // array of rows, each row is array of cells  (board[y][x])
 function makeBoard() {
   // TODO: set "board" to empty HEIGHT x WIDTH matrix array
   for (let y = 0; y < HEIGHT; y++) {
-    board.push(Array.from({length: WIDTH}));
+    var arr = [];
+    for (var j = 0; j< WIDTH; j++){
+      arr.push(null);
+    }
+    board.push(arr);
   }
 }
 
@@ -55,7 +59,13 @@ function makeHtmlBoard() {
 
 function findSpotForCol(x) {
   // TODO: write the real version of this, rather than always returning 0
-  return 0;
+  for (let i = HEIGHT - 1; i >= 0; i--){
+    if (board[i][x] === null){
+      board[i][x] = currPlayer;
+      return i;
+    }
+  }
+  return null;
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
@@ -66,8 +76,9 @@ function placeInTable(y, x) {
   let pieceCell = document.createElement("div");
 
   pieceCell.classList.add("piece");
-  pieceCell.classList.add("p1");
   
+  pieceCell.classList.add(`p${currPlayer}`);
+ 
   place.appendChild(pieceCell);
 }
 
@@ -91,7 +102,7 @@ function handleClick(evt) {
   }
 
   // place piece in board and add to HTML table
-  // TODO: add line to update in-memory board
+  // TODO: add line to update in-memory board ?????
   placeInTable(y, x);
 
   // check for win
@@ -101,13 +112,13 @@ function handleClick(evt) {
   
   // check for tie
   // TODO: check if all cells in board are filled; if so call, call endGame
-  // if(board.every((cell,idx) => cell[idx].classList.contains("piece"))) {
-  //   endGame();
-  // }
-  
+  if(board.every(y => y.every((x, i, y) => y[i] === null))) {
+    endGame("it's a tie");
+  }
+
   // switch players
   // TODO: switch currPlayer 1 <-> 2
-  currPlayer === 1 ? currPlayer = 2 : currPlayer = 1;
+  currPlayer = currPlayer === 1 ? 2 : 1;
 }
 
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
@@ -128,8 +139,8 @@ function checkForWin() {
     );
   }
 
-  // TODO: read and understand this code. Add comments to help you.
-
+  // TODO: read and understand this code. Add comments to help you. 
+  // checks for 4 in a row in all directions
   for (let y = 0; y < HEIGHT; y++) {
     for (let x = 0; x < WIDTH; x++) {
       let horiz = [[y, x], [y, x + 1], [y, x + 2], [y, x + 3]];
@@ -146,3 +157,6 @@ function checkForWin() {
 
 makeBoard();
 makeHtmlBoard();
+
+
+// test
